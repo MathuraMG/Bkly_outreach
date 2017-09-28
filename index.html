@@ -2,10 +2,48 @@
     <script src="p5.min.js"></script>
     <script src="p5.dom.min.js"></script>
     <script src="p5.sound.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
+    <script src="Tone.js"></script>
     <script src="sketch.js"></script>
-  
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC:700" rel="stylesheet">
+    <section class = "score-container">
+      <section class="controls">
+        <button class="button" onclick="startGame()">
+          <img class="button-img" src="/play.png">
+        </button>
+        <button class="button" onClick="resetGame()">
+          <img class="button-img" src="/reset.png">
+        </button>
+      </section>
+      <div class="score" id="score-left">
+        0
+      </div>
+      <div class="score-info">
+        <p class="player">
+          Player 1
+        </p>
+        <p class="time" id="time">
+          2:00
+        </p>
+        <p class="player">
+          Player 2
+        </p>
+      </div>
+      <div class="score" id="score-right">
+        0
+      </div>
+    </section>
+
+    <section class="endgame">
+      <p class="gameover">
+        GAME OVER
+      </p>
+      <p class="result" id="result">
+
+      </p>
+    </section>
 
 </body></html>
