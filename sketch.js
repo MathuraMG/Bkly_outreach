@@ -53,14 +53,14 @@ function setup() {
   // });
 
   mic = new Tone.UserMedia();
-  mic.open(0);
+  mic.open(2);
   mic.toMaster();
 
   meterLeft = new Tone.Meter(0.8);
   meterRight = new Tone.Meter(0.8);
 
   //connect left mic to left meter
-  mic.connect(meterLeft, 0);
+  //mic.connect(meterLeft, 0);
   //connect right mic to right meter
   //mic.connect(meterRight, 1);
 
@@ -86,11 +86,14 @@ function draw() {
       // maxLeft = meterLeft.getLevel();
       // console.log("left: " + meterLeft.getLevel());
       playerLeftY = map(meterLeft.getLevel(),-40,-18,canvasH,0);
+      playerLeftY = constrain(playerLeftY,0, canvasH);
     }
 
     if (meterRight.getLevel() > maxRight) {
       // maxRight = meterRight.getLevel();
       // console.log("right: " + meterRight.getLevel());
+      playerRightY = map(meterRight.getLevel(),-40,-18,canvasH,0);
+      playerRightY = constrain(playerRightY,0, canvasH);
     }
 
     //now maxLeft and maxRight are the audio levels yay
@@ -107,7 +110,7 @@ function draw() {
     bat1.moveUpTo(playerLeftY);
     bat1.draw();
 
-    bat2.move();
+    bat2.moveUpTo(playerRightY);
     bat2.draw();
 
     ball.move();
@@ -135,7 +138,6 @@ function Bat(x,y, speed,img) {
     }
   };
   this.moveUpTo = function(yPos) {
-    console.log(this);
     tempy = parseInt(yPos*0.3 +this.y*0.7);
     this.y = tempy ;
     // this.y=mouseY;
