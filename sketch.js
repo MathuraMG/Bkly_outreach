@@ -6,8 +6,9 @@ var canvasH = screen.height-200;
 
 //audio variables
 var mic;
-var meterLeft;
-var meterRight;
+var meter1;
+var meter1;
+var meter2;
 var maxLeft = -120;
 var maxRight = -120;
 var context;
@@ -19,7 +20,7 @@ var score = {
 }
 var gotHitAt = 0;
 
-var countdown = 120;
+var countdown = 60;
 
 var playerLeftY = 0, playerRightY = 0;
 var play = false;
@@ -34,7 +35,7 @@ function preload() {
 
 function setup() {
 
-  //console.log(navigator.mediaDevices.enumerateDevices());
+  console.log(navigator.mediaDevices.enumerateDevices());
 
   createCanvas(canvasW, canvasH);
   bat1 = new Bat(50,100,2, bat1Img)
@@ -47,62 +48,41 @@ function setup() {
   ball.draw();
 
 
-  //uncomment this in order to see the available audio devices on console
-  // Tone.UserMedia.enumerateDevices().then(function(devices){
-  // 	console.log(devices)
-  // });
+  // uncomment this in order to see the available audio devices on console
+  Tone.UserMedia.enumerateDevices().then(function(devices){
+  	console.log(devices)
+  });
 
-  mic = new Tone.UserMedia();
-  mic.open(2);
-  mic.toMaster();
+  mic1 = new Tone.UserMedia();
+  mic2 = new Tone.UserMedia();
+  mic1.open(2);
+  mic2.open(3)
 
-  meterLeft = new Tone.Meter(0.8);
-  meterRight = new Tone.Meter(0.8);
+  meter1 = new Tone.Meter();
+  meter2 = new Tone.Meter();
 
-  //connect left mic to left meter
-  //mic.connect(meterLeft, 0);
-  //connect right mic to right meter
-  //mic.connect(meterRight, 1);
-
-  //retrieve audio context
-  context = Tone.context;
-
-  //splitter for separating left and right
-  splitter = context.createChannelSplitter();
-
-  //connect the mics to the interface
-  mic.connect(splitter);
-
-  //connect each output of the splitter to a different meter
-  //to measure the audio from each mic in decibels
-  splitter.connect(meterLeft, 0);
-  splitter.connect(meterRight, 1);
+  mic1.connect(meter1)
+  mic2.connect(meter2)
 
 }
 
 function draw() {
   if(play) {
-    if (meterLeft.getLevel() > maxLeft) {
-      // maxLeft = meterLeft.getLevel();
-      // console.log("left: " + meterLeft.getLevel());
-      playerLeftY = map(meterLeft.getLevel(),-40,-18,canvasH,0);
+    if (meter1.getLevel() > maxLeft) {
+      // maxLeft = meter1.getLevel();
+      // console.log("left: " + meter1.getLevel());
+      playerLeftY = map(meter1.getLevel(),-40,-18,canvasH,0);
       playerLeftY = constrain(playerLeftY,0, canvasH);
     }
 
-    if (meterRight.getLevel() > maxRight) {
-      // maxRight = meterRight.getLevel();
-      // console.log("right: " + meterRight.getLevel());
-      playerRightY = map(meterRight.getLevel(),-40,-18,canvasH,0);
+    if (meter2.getLevel() > maxRight) {
+      // maxRight = meter2.getLevel();
+      // console.log("right: " + meter2.getLevel());
+      playerRightY = map(meter2.getLevel(),-40,-18,canvasH,0);
       playerRightY = constrain(playerRightY,0, canvasH);
     }
 
-    //now maxLeft and maxRight are the audio levels yay
-    //they are in decibels, so they go from -infinite (no volume)
-    //to maximum volume (0), you can map them if you want
-
-
   	background("#9fdc63");
-    // image(grassImg,0,0,canvasW,canvasH);
 
     checkCollision(ball,bat1);
     checkCollision(ball,bat2);
@@ -155,6 +135,8 @@ function Ball(x,y,speedX, speedY) {
     ellipse(this.x, this.y, 30,30);
   }
   this.move = function() {
+    this.speedX*=1.0002;
+    this.speedY*=1.0002;
     this.x += this.speedX;
     this.y += this.speedY;
     if(this.y<0 ||this.y>canvasH) {
@@ -199,9 +181,9 @@ function resetGame() {
   $(".endgame").hide();
   play = false;
   countdown = 120;
-  background
   score.left = 0;
   score.right = 0;
+  ballSpeed = 7;
   document.getElementById("score-left").innerHTML = score.left;
   document.getElementById("score-right").innerHTML = score.right;
   ball.x = canvasW/2;
